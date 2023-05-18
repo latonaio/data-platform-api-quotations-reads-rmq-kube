@@ -1,0 +1,151 @@
+{
+	"connection_key": "request",
+	"result": true,
+	"redis_key": "abcdefg",
+	"filepath": "/var/lib/aion/Data/rededge_sdc/abcdef.json",
+	"api_status_code": 200,
+	"runtime_session_id": "boi9ar543dg91ipdnspi099u231280ab0v8af0ew",
+	"business_partner": 101,
+	"service_label": "QUOTATIONS",
+	"api_type": "reads",
+	"Quotations": {
+		"Quotation": 1000,
+		"QuotationDate": "",
+		"DistributionChannel": "",
+		"BusinessArea": "",
+		"District": "",
+		"CreationDate": "",
+		"LastChangeDate": "",
+		"ContractType": "",
+		"VaridityStartDate": "",
+		"ValidityEndDate": "",
+		"InvoiceScheduleStartDate": "",
+		"InvoiceScheduleEndDate": "",
+		"TotalNetAmount": null,
+		"TransactionCurrency": "",
+		"PricingDate": "",
+		"RequestedDeliveryDate": "",
+		"BindingPeriodValidityStartDate": "",
+		"BindingPeriodValidityEndDate": "",
+		"OrderProbabilityInPercent": null,
+		"ExpectedOrderNetAmount": null,
+		"Incoterms": "",
+		"PaymentTerms": "",
+		"PaymentMethod": "",
+		"TaxClassification": "",
+		"ReferenceInquiry": null,
+		"HeaderPartner": [
+			{
+				"PartnerFunction": "",
+				"BusinessPartner": null,
+				"BusinessPartnerFullName": "",
+				"BusinessPartnerName": "",
+				"QuotationType": "",
+				"Organization": "",
+				"Language": "",
+				"Currency": "",
+				"ExternalDocumentID": "",
+				"AddressID": null,
+				"HeaderPartnerContact": [
+					{
+						"BusinessPartner": null,
+						"ContactID": null,
+						"ContactPersonName": "",
+						"EmailAddress": "",
+						"PhoneNumber": "",
+						"MobilePhoneNumber": "",
+						"FaxNumber": "",
+						"ContactTag1": "",
+						"ContactTag2": "",
+						"ContactTag3": "",
+						"ContactTag4": ""
+					}
+				],
+				"HeaderPartnerPlant": [
+					{
+						"BusinessPartner": null,
+						"Plant": ""
+					}
+				]
+			}
+		],
+		"Item": [
+			{
+				"QuotationItem": 1,
+				"QuotationItemCategory": "",
+				"QuotationItemText": "",
+				"Product": "",
+				"QuotationQuantity": null,
+				"QuotationQuantityUnit": "",
+				"ItemOrderProbabilityInPercent": null,
+				"ItemGrossWeight": null,
+				"ItemNetWeight": null,
+				"ItemWeightUnit": "",
+				"TransactionCurrency": "",
+				"BussinessParnterCurrency": "",
+				"NetAmount": null,
+				"ProductGroup": "",
+				"ProductPricingGroup": "",
+				"Batch": "",
+				"IssuingPlant": "",
+				"IssuingPlantStorageLocation": "",
+				"ReceivingPlant": "",
+				"ReceivingPlantStorageLocation": "",
+				"Incoterms": "",
+				"PaymentTerms": "",
+				"ProductTaxClassification": "",
+				"Project": "",
+				"ProfitCenter": "",
+				"ReferenceInquiry": null,
+				"ReferenceInquiryItem": null,
+				"ItemPartner": [
+					{
+						"PartnerFunction": "",
+						"BusinessPartner": null,
+						"PartnerFunctionBusinessPartner": null,
+						"BusinessPartnerFullName": "",
+						"BusinessPartnerName": "",
+						"AddressID": null
+					}
+				],
+				"ItemPricingElement": [
+					{
+						"BusinessPartner": null,
+						"PricingProcedureStep": null,
+						"PricingProcedureCounter": null,
+						"ConditionType": "",
+						"PriceConditionDeterminationDte": "",
+						"ConditionRateValue": null,
+						"ConditionCurrency": "",
+						"ConditionRecord": null,
+						"ConditionSequentialNumber": null,
+						"TaxCode": "",
+						"ConditionAmount": null,
+						"TransactionCurrency": "",
+						"ConditionIsManuallyChanged": null
+					}
+				]
+			}
+		],
+		"Address": [
+			{
+				"AddressID": null,
+				"PostalCode": "",
+				"LocalRegion": "",
+				"Country": "",
+				"District": "",
+				"StreetName": "",
+				"CityName": "",
+				"Building": "",
+				"Floor": null,
+				"Room": null
+			}
+		]
+	},
+	"api_schema": "DPFMQuotationsReads",
+	"accepter": [
+		"Item"
+	],
+	"quotations": null,
+	"deleted": false
+}

@@ -4,6 +4,7 @@ import (
 	"context"
 	dpfm_api_input_reader "data-platform-api-quotations-reads-rmq-kube/DPFM_API_Input_Reader"
 	dpfm_api_output_formatter "data-platform-api-quotations-reads-rmq-kube/DPFM_API_Output_Formatter"
+	"strings"
 	"sync"
 
 	"github.com/latonaio/golang-logging-library-for-data-platform/logger"
@@ -18,14 +19,14 @@ func (c *DPFMAPICaller) readSqlProcess(
 	errs *[]error,
 	log *logger.Logger,
 ) interface{} {
-	var header *dpfm_api_output_formatter.Header
-	var headerPartner *dpfm_api_output_formatter.HeaderPartner
-	var headerPartnerContact *dpfm_api_output_formatter.HeaderPartnerContact
-	var headerPartnerPlant *dpfm_api_output_formatter.HeaderPartnerPlant
-	var address *dpfm_api_output_formatter.Address
-	var item *dpfm_api_output_formatter.Item
-	var itemPartner *dpfm_api_output_formatter.ItemPartner
-	var itemPricingElement *dpfm_api_output_formatter.ItemPricingElement
+	var header *[]dpfm_api_output_formatter.Header
+	var headerPartner *[]dpfm_api_output_formatter.HeaderPartner
+	var headerPartnerContact *[]dpfm_api_output_formatter.HeaderPartnerContact
+	var headerPartnerPlant *[]dpfm_api_output_formatter.HeaderPartnerPlant
+	var address *[]dpfm_api_output_formatter.Address
+	var item *[]dpfm_api_output_formatter.Item
+	var itemPartner *[]dpfm_api_output_formatter.ItemPartner
+	var itemPricingElement *[]dpfm_api_output_formatter.ItemPricingElement
 	for _, fn := range accepter {
 		switch fn {
 		case "Header":
@@ -84,22 +85,19 @@ func (c *DPFMAPICaller) Header(
 	output *dpfm_api_output_formatter.SDC,
 	errs *[]error,
 	log *logger.Logger,
-) *dpfm_api_output_formatter.Header {
+) *[]dpfm_api_output_formatter.Header {
 	quotation := input.Header.Quotation
 
 	rows, err := c.db.Query(
-		`SELECT Quotation, QuotationDate, QuoationType, Buyer, Seller, CreationDate, LastChangeDate, 
-		ContractType, VaridityStartDate, ValidityEndDate, InvoiceScheduleStartDate, InvoiceScheduleEndDate, 
-		TotalNetAmount, TotalTaxAmount, TotalGrossAmount, TransactionCurrency, PricingDate, RequestedDeliveryDate, 
-		BindingPeriodValidityStartDate, BindingPeriodValidityEndDate, Incoterms, PaymentTerms, 
-		PaymentMethod, AccountingExchangeRate, BillingDocumentDate, HeaderText, ReferenceInquiry
+		`SELECT *
 		FROM DataPlatformMastersAndTransactionsMysqlKube.data_platform_quotations_header_data
-		WHERE Quotations = ?;`, quotation,
+		WHERE Quotation = ?;`, quotation,
 	)
 	if err != nil {
 		*errs = append(*errs, err)
 		return nil
 	}
+	defer rows.Close()
 
 	data, err := dpfm_api_output_formatter.ConvertToHeader(input, rows)
 	if err != nil {
@@ -116,21 +114,28 @@ func (c *DPFMAPICaller) HeaderPartner(
 	output *dpfm_api_output_formatter.SDC,
 	errs *[]error,
 	log *logger.Logger,
-) *dpfm_api_output_formatter.HeaderPartner {
+) *[]dpfm_api_output_formatter.HeaderPartner {
+	var args []interface{}
 	quotation := input.Header.Quotation
-	partnerFunction := input.Header.HeaderPartner.PartnerFunction
-	businessPartner := input.Header.HeaderPartner.BusinessPartner
+	partner := input.Header.HeaderPartner
 
+	cnt := 0
+	for _, v := range partner {
+		args = append(args, quotation, v.PartnerFunction)
+		cnt++
+	}
+
+	repeat := strings.Repeat("(?,?),", cnt-1) + "(?,?)"
 	rows, err := c.db.Query(
-		`SELECT Quotation, PartnerFunction, BusinessPartner, BusinessPartnerFullName, BusinessPartnerName, 
-		Language, Organization, Currency, ExternalDocumentID, AddressID
+		`SELECT *
 		FROM DataPlatformMastersAndTransactionsMysqlKube.data_platform_quotations_header_partner_data
-		WHERE (Quotation, PartnerFunction, BusinessPartner) = (?, ?, ?);`, quotation, partnerFunction, businessPartner,
+		WHERE (Quotation, PartnerFunction) IN ( `+repeat+` );`, args...,
 	)
 	if err != nil {
 		*errs = append(*errs, err)
 		return nil
 	}
+	defer rows.Close()
 
 	data, err := dpfm_api_output_formatter.ConvertToHeaderPartner(input, rows)
 	if err != nil {
@@ -147,22 +152,31 @@ func (c *DPFMAPICaller) HeaderPartnerContact(
 	output *dpfm_api_output_formatter.SDC,
 	errs *[]error,
 	log *logger.Logger,
-) *dpfm_api_output_formatter.HeaderPartnerContact {
+) *[]dpfm_api_output_formatter.HeaderPartnerContact {
+	var args []interface{}
 	quotation := input.Header.Quotation
-	partnerFunction := input.Header.HeaderPartner.PartnerFunction
-	businessPartner := input.Header.HeaderPartner.BusinessPartner
-	contactID := input.Header.HeaderPartner.HeaderPartnerContact.ContactID
+	partner := input.Header.HeaderPartner
 
+	cnt := 0
+	for _, v := range partner {
+		partnercontact := v.HeaderPartnerContact
+		for _, w := range partnercontact {
+			args = append(args, quotation, v.PartnerFunction, w.ContactID)
+		}
+		cnt++
+	}
+
+	repeat := strings.Repeat("(?,?,?),", cnt-1) + "(?,?,?)"
 	rows, err := c.db.Query(
-		`SELECT Quotation, PartnerFunction, BusinessPartner, ContactID, ContactPersonName, EmailAddress, PhoneNumber, 
-		MobilePhoneNumber, FaxNumber, ContactTag1, ContactTag2, ContactTag3, ContactTag4
+		`SELECT *
 		FROM DataPlatformMastersAndTransactionsMysqlKube.data_platform_quotations_header_partner_contact_data
-		WHERE (Quotation, PartnerFunction, BusinessPartner, ContactID) = (?, ?, ?, ?);`, quotation, partnerFunction, businessPartner, contactID,
+		WHERE (Quotation, PartnerFunction, ContactID) IN ( `+repeat+` );`, args...,
 	)
 	if err != nil {
 		*errs = append(*errs, err)
 		return nil
 	}
+	defer rows.Close()
 
 	data, err := dpfm_api_output_formatter.ConvertToHeaderPartnerContact(input, rows)
 	if err != nil {
@@ -179,21 +193,31 @@ func (c *DPFMAPICaller) HeaderPartnerPlant(
 	output *dpfm_api_output_formatter.SDC,
 	errs *[]error,
 	log *logger.Logger,
-) *dpfm_api_output_formatter.HeaderPartnerPlant {
+) *[]dpfm_api_output_formatter.HeaderPartnerPlant {
+	var args []interface{}
 	quotation := input.Header.Quotation
-	partnerFunction := input.Header.HeaderPartner.PartnerFunction
-	businessPartner := input.Header.HeaderPartner.BusinessPartner
-	plant := input.Header.HeaderPartner.HeaderPartnerPlant.Plant
+	partner := input.Header.HeaderPartner
 
+	cnt := 0
+	for _, v := range partner {
+		partnerplant := v.HeaderPartnerPlant
+		for _, w := range partnerplant {
+			args = append(args, quotation, v.PartnerFunction, w.BusinessPartner)
+		}
+		cnt++
+	}
+
+	repeat := strings.Repeat("(?,?,?),", cnt-1) + "(?,?,?)"
 	rows, err := c.db.Query(
-		`SELECT Quotation, PartnerFunction, BusinessPartner, Plant
+		`SELECT *
 		FROM DataPlatformMastersAndTransactionsMysqlKube.data_platform_quotations_header_partner_plant_data
-		WHERE (Quotation, PartnerFunction, BusinessPartner, Plant) = (?, ?, ?, ?);`, quotation, partnerFunction, businessPartner, plant,
+		WHERE (Quotation, PartnerFunction, BusinessPartner) IN ( `+repeat+` );`, args...,
 	)
 	if err != nil {
 		*errs = append(*errs, err)
 		return nil
 	}
+	defer rows.Close()
 
 	data, err := dpfm_api_output_formatter.ConvertToHeaderPartnerPlant(input, rows)
 	if err != nil {
@@ -210,20 +234,29 @@ func (c *DPFMAPICaller) Address(
 	output *dpfm_api_output_formatter.SDC,
 	errs *[]error,
 	log *logger.Logger,
-) *dpfm_api_output_formatter.Address {
+) *[]dpfm_api_output_formatter.Address {
+	var args []interface{}
 	quotation := input.Header.Quotation
-	addressID := input.Header.Address.AddressID
+	address := input.Header.Address
+
+	cnt := 0
+	for _, v := range address {
+		args = append(args, quotation, v.AddressID)
+		cnt++
+	}
+
+	repeat := strings.Repeat("(?,?),", cnt-1) + "(?,?)"
 
 	rows, err := c.db.Query(
-		`SELECT Quotation, AddressID, PostalCode, LocalRegion, Country, District, StreetName, 
-		CityName, Building, Floor, Room
+		`SELECT *
 		FROM DataPlatformMastersAndTransactionsMysqlKube.data_platform_quotations_address_data
-		WHERE (Quotation, AddressID) = (?, ?);`, quotation, addressID,
+		WHERE (Quotation, AddressID) IN ( `+repeat+` );`, args...,
 	)
 	if err != nil {
 		*errs = append(*errs, err)
 		return nil
 	}
+	defer rows.Close()
 
 	data, err := dpfm_api_output_formatter.ConvertToAddress(input, rows)
 	if err != nil {
@@ -240,26 +273,29 @@ func (c *DPFMAPICaller) Item(
 	output *dpfm_api_output_formatter.SDC,
 	errs *[]error,
 	log *logger.Logger,
-) *dpfm_api_output_formatter.Item {
+) *[]dpfm_api_output_formatter.Item {
+	var args []interface{}
 	quotation := input.Header.Quotation
-	quotationItem := input.Header.Item.QuotationItem
+	item := input.Header.Item
+
+	cnt := 0
+	for _, v := range item {
+		args = append(args, quotation, v.QuotationItem)
+		cnt++
+	}
+
+	repeat := strings.Repeat("(?,?),", cnt-1) + "(?,?)"
 
 	rows, err := c.db.Query(
-		`SELECT Quotation, QuotationItem, QuotationItemCategory, QuotationItemText, Product, ProductStandardID, 
-		PricingDate, QuotationQuantity, QuotationQuantityUnit, ItemGrossWeight, ItemNetWeight, ItemWeightUnit, NetAmount, 
-		TaxAmount, GrossAmount, ProductGroup, BillingDocumentDate, ProductionPlantBusinessPartner, ProductionPlant, 
-		ProductionPlantTimeZone, ProductionPlantStorageLocation, IssuingPlantBusinessPartner, IssuingPlant, IssuingPlantTimeZone, 
-		IssuingPlantStorageLocation, ReceivingPlantBusinessPartner, ReceivingPlant, ReceivingPlantTimeZone, 
-		ReceivingPlantStorageLocation, Incoterms, BPTaxClassification, ProductTaxClassification, ProductAccountAssignmentGroup, 
-		PaymentTerms, PaymentMethod, Project, AccountingExchangeRate, ReferenceInquiry, ReferenceDocumentItem, ItemDeliveryStatus, 
-		IssuingStatus, ReceivingStatus, BillingStatus, TaxCode, TaxRate, CountryOfOrigin
+		`SELECT *
 		FROM DataPlatformMastersAndTransactionsMysqlKube.data_platform_quotations_item_data
-		WHERE (Quotation, QuotationItem) = (?, ?);`, quotation, quotationItem,
+		WHERE (Quotation, QuotationItem) IN ( `+repeat+` );`, args...,
 	)
 	if err != nil {
 		*errs = append(*errs, err)
 		return nil
 	}
+	defer rows.Close()
 
 	data, err := dpfm_api_output_formatter.ConvertToItem(input, rows)
 	if err != nil {
@@ -276,22 +312,31 @@ func (c *DPFMAPICaller) ItemPartner(
 	output *dpfm_api_output_formatter.SDC,
 	errs *[]error,
 	log *logger.Logger,
-) *dpfm_api_output_formatter.ItemPartner {
+) *[]dpfm_api_output_formatter.ItemPartner {
+	var args []interface{}
 	quotation := input.Header.Quotation
-	quotationItem := input.Header.Item.QuotationItem
-	partnerFunction := input.Header.Item.ItemPartner.PartnerFunction
-	businessPartner := input.Header.Item.ItemPartner.BusinessPartner
+	item := input.Header.Item
+
+	cnt := 0
+	for _, v := range item {
+		itemPartner := v.ItemPartner
+		for _, w := range itemPartner {
+			args = append(args, quotation, v.QuotationItem, w.PartnerFunction)
+		}
+		cnt++
+	}
+	repeat := strings.Repeat("(?,?,?),", cnt-1) + "(?,?,?)"
 
 	rows, err := c.db.Query(
-		`SELECT Quotation, QuotationItem, PartnerFunction, BusinessPartner, BusinessPartnerFullName, 
-		BusinessPartnerName, Language, Currency, ExternalDocumentID, AddressID
+		`SELECT *
 		FROM DataPlatformMastersAndTransactionsMysqlKube.data_platform_quotations_item_partner_data
-		WHERE (Quotation, QuotationItem, PartnerFunction, BusinessPartner) = (?, ?, ?, ?);`, quotation, quotationItem, partnerFunction, businessPartner,
+		WHERE (Quotation, QuotationItem, PartnerFunction)  IN ( `+repeat+` );`, args...,
 	)
 	if err != nil {
 		*errs = append(*errs, err)
 		return nil
 	}
+	defer rows.Close()
 
 	data, err := dpfm_api_output_formatter.ConvertToItemPartner(input, rows)
 	if err != nil {
@@ -308,23 +353,31 @@ func (c *DPFMAPICaller) ItemPricingElement(
 	output *dpfm_api_output_formatter.SDC,
 	errs *[]error,
 	log *logger.Logger,
-) *dpfm_api_output_formatter.ItemPricingElement {
+) *[]dpfm_api_output_formatter.ItemPricingElement {
+	var args []interface{}
 	quotation := input.Header.Quotation
-	quotationItem := input.Header.Item.QuotationItem
-	pricingProcedureStep := input.Header.Item.ItemPricingElement.PricingProcedureStep
-	pricingProcedureCounter := input.Header.Item.ItemPricingElement.PricingProcedureCounter
+	item := input.Header.Item
+
+	cnt := 0
+	for _, v := range item {
+		itemPricingElement := v.ItemPricingElement
+		for _, w := range itemPricingElement {
+			args = append(args, quotation, v.QuotationItem, w.PricingProcedureStep, w.PricingProcedureCounter)
+		}
+		cnt++
+	}
+	repeat := strings.Repeat("(?,?,?,?),", cnt-1) + "(?,?,?,?)"
 
 	rows, err := c.db.Query(
-		`SELECT Quotation, QuotationItem, PricingProcedureStep, PricingProcedureCounter, ConditionType, 
-		PricingDate, ConditionRateValue, ConditionCurrency, ConditionQuantity, ConditionQuantityUnit, 
-		ConditionRecord, ConditionSequentialNumber, TaxCode, ConditionAmount, TransactionCurrency, ConditionIsManuallyChanged
+		`SELECT *
 		FROM DataPlatformMastersAndTransactionsMysqlKube.data_platform_quotations_item_pricing_element_data
-		WHERE (Quotation, QuotationItem, PricingProcedureStep, PricingProcedureCounter) = (?, ?, ?, ?);`, quotation, quotationItem, pricingProcedureStep, pricingProcedureCounter,
+		WHERE (Quotation, QuotationItem, PricingProcedureStep, PricingProcedureCounter) IN ( `+repeat+` );`, args...,
 	)
 	if err != nil {
 		*errs = append(*errs, err)
 		return nil
 	}
+	defer rows.Close()
 
 	data, err := dpfm_api_output_formatter.ConvertToItemPricingElement(input, rows)
 	if err != nil {

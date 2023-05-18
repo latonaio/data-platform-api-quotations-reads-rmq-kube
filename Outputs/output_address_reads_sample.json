@@ -1,0 +1,48 @@
+{
+	"connection_key": "request",
+	"result": true,
+	"redis_key": "abcdefg",
+	"filepath": "/var/lib/aion/Data/rededge_sdc/abcdef.json",
+	"api_status_code": 200,
+	"runtime_session_id": "boi9ar543dg91ipdnspi099u231280ab0v8af0ew",
+	"business_partner": 101,
+	"service_label": "QUOTATIONS",
+	"api_type": "reads",
+	"message": {
+		"Header": null,
+		"HeaderPartner": null,
+		"HeaderPartnerContact": null,
+		"HeaderPartnerPlant": null,
+		"Address": [
+			{
+				"Quotation": 1000,
+				"AddressID": 1,
+				"PostalCode": null,
+				"LocalRegion": null,
+				"Country": null,
+				"District": null,
+				"StreetName": null,
+				"CityName": null,
+				"Building": null,
+				"Floor": null,
+				"Room": null
+			}
+		],
+		"Item": null,
+		"ItemPartner": null,
+		"ItemPricingElement": null
+	},
+	"api_schema": "DPFMQuotationsReads",
+	"accepter": [
+		"Address"
+	],
+	"deleted": false,
+	"sql_update_result": null,
+	"sql_update_error": "",
+	"subfunc_result": null,
+	"subfunc_error": "",
+	"exconf_result": null,
+	"exconf_error": "",
+	"api_processing_result": true,
+	"api_processing_error": ""
+}

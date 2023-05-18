@@ -1,20 +1,18 @@
 package requests
 
 type ItemPricingElement struct {
-	Quotation                  int      `json:"Quotation"`
-	QuotationItem              int      `json:"QuotationItem"`
-	PricingProcedureStep       int      `json:"PricingProcedureStep"`
-	PricingProcedureCounter    int      `json:"PricingProcedureCounter"`
-	ConditionType              *string  `json:"ConditionType"`
-	PricingDate                *string  `json:"PricingDate"`
-	ConditionRateValue         *float32 `json:"ConditionRateValue"`
-	ConditionCurrency          *string  `json:"ConditionCurrency"`
-	ConditionQuantity          *float32 `json:"ConditionQuantity"`
-	ConditionQuantityUnit      *string  `json:"ConditionQuantityUnit"`
-	ConditionRecord            *int     `json:"ConditionRecord"`
-	ConditionSequentialNumber  *int     `json:"ConditionSequentialNumber"`
-	TaxCode                    *string  `json:"TaxCode"`
-	ConditionAmount            *float32 `json:"ConditionAmount"`
-	TransactionCurrency        *string  `json:"TransactionCurrency"`
-	ConditionIsManuallyChanged *bool    `json:"ConditionIsManuallyChanged"`
+	BusinessPartner                int      `json:"BusinessPartner"`
+	Quotation                      int      `json:"Quotation"`
+	QuotationItem                  int      `json:"QuotationItem"`
+	PricingProcedureStep           int      `json:"PricingProcedureStep"`
+	PricingProcedureCounter        int      `json:"PricingProcedureCounter"`
+	ConditionType                  *string  `json:"ConditionType"`
+	PriceConditionDeterminationDte *string  `json:"PriceConditionDeterminationDte"`
+	ConditionRateValue             *float32 `json:"ConditionRateValue"`
+	ConditionCurrency              *string  `json:"ConditionCurrency"`
+	ConditionRecord                *int     `json:"ConditionRecord"`
+	ConditionSequentialNumber      *int     `json:"ConditionSequentialNumber"`
+	TaxCode                        *string  `json:"TaxCode"`
+	TransactionCurrency            *string  `json:"TransactionCurrency"`
+	ConditionIsManuallyChanged     *bool    `json:"ConditionIsManuallyChanged"`
 }
