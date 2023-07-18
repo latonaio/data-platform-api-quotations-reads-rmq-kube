@@ -26,89 +26,60 @@ type SDC struct {
 
 type Message struct {
 	Header               *[]Header               `json:"Header"`
-	HeaderPartner        *[]HeaderPartner        `json:"HeaderPartner"`
-	HeaderPartnerContact *[]HeaderPartnerContact `json:"HeaderPartnerContact"`
-	HeaderPartnerPlant   *[]HeaderPartnerPlant   `json:"HeaderPartnerPlant"`
-	Address              *[]Address              `json:"Address"`
 	Item                 *[]Item                 `json:"Item"`
-	ItemPartner          *[]ItemPartner          `json:"ItemPartner"`
 	ItemPricingElement   *[]ItemPricingElement   `json:"ItemPricingElement"`
-}
-
-type Quotations struct {
-	ConnectionKey string `json:"connection_key"`
-	Result        bool   `json:"result"`
-	RedisKey      string `json:"redis_key"`
-	Filepath      string `json:"filepath"`
-	Product       string `json:"Product"`
-	APISchema     string `json:"api_schema"`
-	MaterialCode  string `json:"material_code"`
-	Deleted       string `json:"deleted"`
+	Partner		         *[]Partner       		 `json:"Partner"`
+	Address              *[]Address              `json:"Address"`
 }
 
 type Header struct {
-	Quotation                      int      `json:"Quotation"`
-	QuotationDate                  *string  `json:"QuotationDate"`
-	DistributionChannel            *string  `json:"DistributionChannel"`
-	BusinessArea                   *string  `json:"BusinessArea"`
-	District                       *string  `json:"District"`
-	CreationDate                   *string  `json:"CreationDate"`
-	LastChangeDate                 *string  `json:"LastChangeDate"`
-	ContractType                   *string  `json:"ContractType"`
-	VaridityStartDate              *string  `json:"VaridityStartDate"`
-	ValidityEndDate                *string  `json:"ValidityEndDate"`
-	InvoiceScheduleStartDate       *string  `json:"InvoiceScheduleStartDate"`
-	InvoiceScheduleEndDate         *string  `json:"InvoiceScheduleEndDate"`
-	TotalNetAmount                 *float32 `json:"TotalNetAmount"`
-	TransactionCurrency            *string  `json:"TransactionCurrency"`
-	PricingDate                    *string  `json:"PricingDate"`
-	RequestedDeliveryDate          *string  `json:"RequestedDeliveryDate"`
-	BindingPeriodValidityStartDate *string  `json:"BindingPeriodValidityStartDate"`
-	BindingPeriodValidityEndDate   *string  `json:"BindingPeriodValidityEndDate"`
-	OrderProbabilityInPercent      *float32 `json:"OrderProbabilityInPercent"`
-	ExpectedOrderNetAmount         *float32 `json:"ExpectedOrderNetAmount"`
-	Incoterms                      *string  `json:"Incoterms"`
-	PaymentTerms                   *string  `json:"PaymentTerms"`
-	PaymentMethod                  *string  `json:"PaymentMethod"`
-	TaxClassification              *string  `json:"TaxClassification"`
-	ReferenceInquiry               *int     `json:"ReferenceInquiry"`
-}
-
-type HeaderPartner struct {
-	Quotation               int     `json:"Quotation"`
-	PartnerFunction         string  `json:"PartnerFunction"`
-	BusinessPartner         *int    `json:"BusinessPartner"`
-	BusinessPartnerFullName *string `json:"BusinessPartnerFullName"`
-	BusinessPartnerName     *string `json:"BusinessPartnerName"`
-	QuotationType           *string `json:"QuotationType"`
-	Organization            *string `json:"Organization"`
-	Language                *string `json:"Language"`
-	Currency                *string `json:"Currency"`
-	ExternalDocumentID      *string `json:"ExternalDocumentID"`
-	AddressID               *int    `json:"AddressID"`
-}
-
-type HeaderPartnerContact struct {
-	Quotation         int     `json:"Quotation"`
-	PartnerFunction   string  `json:"PartnerFunction"`
-	ContactID         int     `json:"ContactID"`
-	BusinessPartner   *int    `json:"BusinessPartner"`
-	ContactPersonName *string `json:"ContactPersonName"`
-	EmailAddress      *string `json:"EmailAddress"`
-	PhoneNumber       *string `json:"PhoneNumber"`
-	MobilePhoneNumber *string `json:"MobilePhoneNumber"`
-	FaxNumber         *string `json:"FaxNumber"`
-	ContactTag1       *string `json:"ContactTag1"`
-	ContactTag2       *string `json:"ContactTag2"`
-	ContactTag3       *string `json:"ContactTag3"`
-	ContactTag4       *string `json:"ContactTag4"`
-}
-
-type HeaderPartnerPlant struct {
-	Quotation       int     `json:"Quotation"`
-	PartnerFunction string  `json:"PartnerFunction"`
-	BusinessPartner int     `json:"BusinessPartner"`
-	Plant           *string `json:"Plant"`
+	Quotation							int			`json:"Quotation"`
+	QuotationDate						string		`json:"QuotationDate"`
+	QuotationType						string		`json:"QuotationType"`
+	QuotationStatus						string		`json:"QuotationStatus"`
+	SupplyChainRelationshipID			int 		`json:"SupplyChainRelationshipID"`
+	SupplyChainRelationshipBillingID	*int		`json:"SupplyChainRelationshipBillingID"`
+	SupplyChainRelationshipPaymentID	*int		`json:"SupplyChainRelationshipPaymentID"`
+	Buyer								int 		`json:"Buyer"`
+	Seller								int			`json:"Seller"`
+	BillToParty							*int		`json:"BillToParty"`
+	BillFromParty						*int		`json:"BillFromParty"`
+	BillToCountry						*int		`json:"BillToCountry"`
+	BillFromCountry						*int		`json:"BillFromCountry"`
+	Payer								*int		`json:"Payer"`
+	Payee								*int		`json:"Payee"`
+	ContractType						*string		`json:"ContractType"`
+	BindingPeriodValidityStartDate		*string		`json:"BindingPeriodValidityStartDate"`
+	BindingPeriodValidityEndDate		*string		`json:"BindingPeriodValidityEndDate"`
+	OrderValidityStartDate				*string		`json:"OrderValidityStartDate"`
+	OrderValidityEndDate				*string		`json:"OrderValidityEndDate"`
+	InvoicePeriodStartDate				*string		`json:"InvoicePeriodStartDate"`
+	InvoicePeriodEndDate				*string		`json:"InvoicePeriodEndDate"`
+	TotalNetAmount						float32		`json:"TotalNetAmount"`
+	TotalTaxAmount						float32		`json:"TotalTaxAmount"`
+	TotalGrossAmount					float32		`json:"TotalGrossAmount"`
+	HeaderOrderIsDefined				*bool		`json:"HeaderOrderIsDefined"`
+	TransactionCurrency					string		`json:"TransactionCurrency"`
+	PricingDate							string		`json:"PricingDate"`
+	PriceDetnExchangeRate				*string		`json:"PriceDetnExchangeRate"`
+	RequestedDeliveryDate				string		`json:"RequestedDeliveryDate"`
+	OrderProbabilityInPercent			*float32	`json:"OrderProbabilityInPercent"`
+	ExpectedOrderNetAmount				*float32	`json:"ExpectedOrderNetAmount"`
+	Incoterms							*string		`json:"Incoterms"`
+	PaymentTerms						string		`json:"PaymentTerms"`
+	PaymentMethod						string		`json:"PaymentMethod"`
+	ReferenceDocument					*int		`json:"ReferenceDocument"`
+	AccountAssignmentGroup				string		`json:"AccountAssignmentGroup"`
+	AccountingExchangeRate				*float32	`json:"AccountingExchangeRate"`
+	InvoiceDocumentDate					string		`json:"InvoiceDocumentDate"`
+	IsExportImport						*bool		`json:"IsExportImport"`
+	HeaderText							*bool		`json:"HeaderText"`
+	HeaderIsClosed						*bool		`json:"HeaderIsClosed"`
+	HeaderBlockStatus					*bool		`json:"HeaderBlockStatus"`
+	CreationDate						string		`json:"CreationDate"`
+	LastChangeDate						string		`json:"LastChangeDate"`
+	IsCancelled							*bool		`json:"IsCancelled"`
+	IsMarkedForDeletion					*bool		`json:"IsMarkedForDeletion"`
 }
 
 type Item struct {
@@ -142,17 +113,6 @@ type Item struct {
 	ReferenceInquiryItem          *int     `json:"ReferenceInquiryItem"`
 }
 
-type ItemPartner struct {
-	Quotation                      int     `json:"Quotation"`
-	QuotationItem                  int     `json:"QuotationItem"`
-	PartnerFunction                string  `json:"PartnerFunction"`
-	BusinessPartner                int     `json:"BusinessPartner"`
-	PartnerFunctionBusinessPartner *int    `json:"PartnerFunctionBusinessPartner"`
-	BusinessPartnerFullName        *string `json:"BusinessPartnerFullName"`
-	BusinessPartnerName            *string `json:"BusinessPartnerName"`
-	AddressID                      *int    `json:"AddressID"`
-}
-
 type ItemPricingElement struct {
 	BusinessPartner                int      `json:"BusinessPartner"`
 	Quotation                      int      `json:"Quotation"`
@@ -168,6 +128,20 @@ type ItemPricingElement struct {
 	TaxCode                        *string  `json:"TaxCode"`
 	TransactionCurrency            *string  `json:"TransactionCurrency"`
 	ConditionIsManuallyChanged     *bool    `json:"ConditionIsManuallyChanged"`
+}
+
+type Partner struct {
+	Quotation               int     `json:"Quotation"`
+	PartnerFunction         string  `json:"PartnerFunction"`
+	BusinessPartner         *int    `json:"BusinessPartner"`
+	BusinessPartnerFullName *string `json:"BusinessPartnerFullName"`
+	BusinessPartnerName     *string `json:"BusinessPartnerName"`
+	QuotationType           *string `json:"QuotationType"`
+	Organization            *string `json:"Organization"`
+	Language                *string `json:"Language"`
+	Currency                *string `json:"Currency"`
+	ExternalDocumentID      *string `json:"ExternalDocumentID"`
+	AddressID               *int    `json:"AddressID"`
 }
 
 type Address struct {

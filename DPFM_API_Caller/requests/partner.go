@@ -1,6 +1,6 @@
 package requests
 
-type HeaderPartner struct {
+type Partner struct {
 	Quotation               int     `json:"Quotation"`
 	PartnerFunction         string  `json:"PartnerFunction"`
 	BusinessPartner         *int    `json:"BusinessPartner"`

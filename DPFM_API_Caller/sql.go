@@ -20,46 +20,40 @@ func (c *DPFMAPICaller) readSqlProcess(
 	log *logger.Logger,
 ) interface{} {
 	var header *[]dpfm_api_output_formatter.Header
-	var headerPartner *[]dpfm_api_output_formatter.HeaderPartner
-	var headerPartnerContact *[]dpfm_api_output_formatter.HeaderPartnerContact
-	var headerPartnerPlant *[]dpfm_api_output_formatter.HeaderPartnerPlant
-	var address *[]dpfm_api_output_formatter.Address
 	var item *[]dpfm_api_output_formatter.Item
-	var itemPartner *[]dpfm_api_output_formatter.ItemPartner
 	var itemPricingElement *[]dpfm_api_output_formatter.ItemPricingElement
+	var partner *[]dpfm_api_output_formatter.Partner
+	var address *[]dpfm_api_output_formatter.Address
 	for _, fn := range accepter {
 		switch fn {
 		case "Header":
 			func() {
 				header = c.Header(mtx, input, output, errs, log)
 			}()
-		case "HeaderPartner":
+		case "HeadersByBuyer":
 			func() {
-				headerPartner = c.HeaderPartner(mtx, input, output, errs, log)
+				header = c.HeadersByBuyer(mtx, input, output, errs, log)
 			}()
-		case "HeaderPartnerContact":
+		case "HeadersBySeller":
 			func() {
-				headerPartnerContact = c.HeaderPartnerContact(mtx, input, output, errs, log)
-			}()
-		case "HeaderPartnerPlant":
-			func() {
-				headerPartnerPlant = c.HeaderPartnerPlant(mtx, input, output, errs, log)
-			}()
-		case "Address":
-			func() {
-				address = c.Address(mtx, input, output, errs, log)
+				header = c.HeadersBySeller(mtx, input, output, errs, log)
 			}()
 		case "Item":
 			func() {
 				item = c.Item(mtx, input, output, errs, log)
 			}()
-		case "ItemPartner":
-			func() {
-				itemPartner = c.ItemPartner(mtx, input, output, errs, log)
-			}()
 		case "ItemPricingElement":
 			func() {
 				itemPricingElement = c.ItemPricingElement(mtx, input, output, errs, log)
+			}()
+
+		case "Partner":
+			func() {
+				partner = c.Partner(mtx, input, output, errs, log)
+			}()
+		case "Address":
+			func() {
+				address = c.Address(mtx, input, output, errs, log)
 			}()
 		default:
 		}
@@ -67,13 +61,10 @@ func (c *DPFMAPICaller) readSqlProcess(
 
 	data := &dpfm_api_output_formatter.Message{
 		Header:               header,
-		HeaderPartner:        headerPartner,
-		HeaderPartnerContact: headerPartnerContact,
-		HeaderPartnerPlant:   headerPartnerPlant,
-		Address:              address,
 		Item:                 item,
-		ItemPartner:          itemPartner,
 		ItemPricingElement:   itemPricingElement,
+		Partner:	          partner,
+		Address:              address,
 	}
 
 	return data
@@ -108,36 +99,45 @@ func (c *DPFMAPICaller) Header(
 	return data
 }
 
-func (c *DPFMAPICaller) HeaderPartner(
+func (c *DPFMAPICaller) HeadersByBuyer(
 	mtx *sync.Mutex,
 	input *dpfm_api_input_reader.SDC,
 	output *dpfm_api_output_formatter.SDC,
 	errs *[]error,
 	log *logger.Logger,
-) *[]dpfm_api_output_formatter.HeaderPartner {
-	var args []interface{}
-	quotation := input.Header.Quotation
-	partner := input.Header.HeaderPartner
-
-	cnt := 0
-	for _, v := range partner {
-		args = append(args, quotation, v.PartnerFunction)
-		cnt++
+) *[]dpfm_api_output_formatter.Header {
+	where := "WHERE 1 = 1"
+	if input.Header.Buyer != nil {
+		where = fmt.Sprintf("%s\nAND Buyer = %v", where, *input.Header.Buyer)
+	}
+	if input.Header.HeaderOrderIsDefined != nil {
+		where = fmt.Sprintf("%s\nAND HeaderOrderIsDefined = %t", where, *input.Header.HeaderOrderIsDefined)
+	}
+	if input.Header.HeaderIsClosed != nil {
+		where = fmt.Sprintf("%s\nAND HeaderIsClosed = %t", where, *input.Header.HeaderIsClosed)
+	}
+	if input.Header.HeaderDeliveryStatus != nil {
+		where = fmt.Sprintf("%s\nAND HeaderBlockStatus = %t", where, *input.Header.HeaderBlockStatus)
+	}
+	if input.Header.IsCancelled != nil {
+		where = fmt.Sprintf("%s\nAND IsCancelled = %t", where, *input.Header.IsCancelled)
+	}
+	if input.Header.IsMarkedForDeletion != nil {
+		where = fmt.Sprintf("%s\nAND IsMarkedForDeletion = %t", where, *input.Header.IsMarkedForDeletion)
 	}
 
-	repeat := strings.Repeat("(?,?),", cnt-1) + "(?,?)"
 	rows, err := c.db.Query(
 		`SELECT *
-		FROM DataPlatformMastersAndTransactionsMysqlKube.data_platform_quotations_header_partner_data
-		WHERE (Quotation, PartnerFunction) IN ( `+repeat+` );`, args...,
+		FROM DataPlatformMastersAndTransactionsMysqlKube.data_platform_quotations_header_data
+		` + where + `;`,
 	)
+
 	if err != nil {
 		*errs = append(*errs, err)
 		return nil
 	}
-	defer rows.Close()
 
-	data, err := dpfm_api_output_formatter.ConvertToHeaderPartner(input, rows)
+	data, err := dpfm_api_output_formatter.ConvertToHeader(rows)
 	if err != nil {
 		*errs = append(*errs, err)
 		return nil
@@ -146,119 +146,45 @@ func (c *DPFMAPICaller) HeaderPartner(
 	return data
 }
 
-func (c *DPFMAPICaller) HeaderPartnerContact(
+func (c *DPFMAPICaller) HeadersBySeller(
 	mtx *sync.Mutex,
 	input *dpfm_api_input_reader.SDC,
 	output *dpfm_api_output_formatter.SDC,
 	errs *[]error,
 	log *logger.Logger,
-) *[]dpfm_api_output_formatter.HeaderPartnerContact {
-	var args []interface{}
-	quotation := input.Header.Quotation
-	partner := input.Header.HeaderPartner
-
-	cnt := 0
-	for _, v := range partner {
-		partnercontact := v.HeaderPartnerContact
-		for _, w := range partnercontact {
-			args = append(args, quotation, v.PartnerFunction, w.ContactID)
-		}
-		cnt++
+) *[]dpfm_api_output_formatter.Header {
+	where := "WHERE 1 = 1"
+	if input.Header.Seller != nil {
+		where = fmt.Sprintf("%s\nAND Seller = %v", where, *input.Header.Seller)
 	}
-
-	repeat := strings.Repeat("(?,?,?),", cnt-1) + "(?,?,?)"
-	rows, err := c.db.Query(
-		`SELECT *
-		FROM DataPlatformMastersAndTransactionsMysqlKube.data_platform_quotations_header_partner_contact_data
-		WHERE (Quotation, PartnerFunction, ContactID) IN ( `+repeat+` );`, args...,
-	)
-	if err != nil {
-		*errs = append(*errs, err)
-		return nil
+	if input.Header.HeaderOrderIsDefined != nil {
+		where = fmt.Sprintf("%s\nAND HeaderOrderIsDefined = %t", where, *input.Header.HeaderOrderIsDefined)
 	}
-	defer rows.Close()
-
-	data, err := dpfm_api_output_formatter.ConvertToHeaderPartnerContact(input, rows)
-	if err != nil {
-		*errs = append(*errs, err)
-		return nil
+	if input.Header.HeaderIsClosed != nil {
+		where = fmt.Sprintf("%s\nAND HeaderIsClosed = %t", where, *input.Header.HeaderIsClosed)
 	}
-
-	return data
-}
-
-func (c *DPFMAPICaller) HeaderPartnerPlant(
-	mtx *sync.Mutex,
-	input *dpfm_api_input_reader.SDC,
-	output *dpfm_api_output_formatter.SDC,
-	errs *[]error,
-	log *logger.Logger,
-) *[]dpfm_api_output_formatter.HeaderPartnerPlant {
-	var args []interface{}
-	quotation := input.Header.Quotation
-	partner := input.Header.HeaderPartner
-
-	cnt := 0
-	for _, v := range partner {
-		partnerplant := v.HeaderPartnerPlant
-		for _, w := range partnerplant {
-			args = append(args, quotation, v.PartnerFunction, w.BusinessPartner)
-		}
-		cnt++
+	if input.Header.HeaderDeliveryStatus != nil {
+		where = fmt.Sprintf("%s\nAND HeaderBlockStatus = %t", where, *input.Header.HeaderBlockStatus)
 	}
-
-	repeat := strings.Repeat("(?,?,?),", cnt-1) + "(?,?,?)"
-	rows, err := c.db.Query(
-		`SELECT *
-		FROM DataPlatformMastersAndTransactionsMysqlKube.data_platform_quotations_header_partner_plant_data
-		WHERE (Quotation, PartnerFunction, BusinessPartner) IN ( `+repeat+` );`, args...,
-	)
-	if err != nil {
-		*errs = append(*errs, err)
-		return nil
+	if input.Header.IsCancelled != nil {
+		where = fmt.Sprintf("%s\nAND IsCancelled = %t", where, *input.Header.IsCancelled)
 	}
-	defer rows.Close()
-
-	data, err := dpfm_api_output_formatter.ConvertToHeaderPartnerPlant(input, rows)
-	if err != nil {
-		*errs = append(*errs, err)
-		return nil
+	if input.Header.IsMarkedForDeletion != nil {
+		where = fmt.Sprintf("%s\nAND IsMarkedForDeletion = %t", where, *input.Header.IsMarkedForDeletion)
 	}
-
-	return data
-}
-
-func (c *DPFMAPICaller) Address(
-	mtx *sync.Mutex,
-	input *dpfm_api_input_reader.SDC,
-	output *dpfm_api_output_formatter.SDC,
-	errs *[]error,
-	log *logger.Logger,
-) *[]dpfm_api_output_formatter.Address {
-	var args []interface{}
-	quotation := input.Header.Quotation
-	address := input.Header.Address
-
-	cnt := 0
-	for _, v := range address {
-		args = append(args, quotation, v.AddressID)
-		cnt++
-	}
-
-	repeat := strings.Repeat("(?,?),", cnt-1) + "(?,?)"
 
 	rows, err := c.db.Query(
 		`SELECT *
-		FROM DataPlatformMastersAndTransactionsMysqlKube.data_platform_quotations_address_data
-		WHERE (Quotation, AddressID) IN ( `+repeat+` );`, args...,
+		FROM DataPlatformMastersAndTransactionsMysqlKube.data_platform_quotations_header_data
+		` + where + `;`,
 	)
+
 	if err != nil {
 		*errs = append(*errs, err)
 		return nil
 	}
-	defer rows.Close()
 
-	data, err := dpfm_api_output_formatter.ConvertToAddress(input, rows)
+	data, err := dpfm_api_output_formatter.ConvertToHeader(rows)
 	if err != nil {
 		*errs = append(*errs, err)
 		return nil
@@ -306,47 +232,6 @@ func (c *DPFMAPICaller) Item(
 	return data
 }
 
-func (c *DPFMAPICaller) ItemPartner(
-	mtx *sync.Mutex,
-	input *dpfm_api_input_reader.SDC,
-	output *dpfm_api_output_formatter.SDC,
-	errs *[]error,
-	log *logger.Logger,
-) *[]dpfm_api_output_formatter.ItemPartner {
-	var args []interface{}
-	quotation := input.Header.Quotation
-	item := input.Header.Item
-
-	cnt := 0
-	for _, v := range item {
-		itemPartner := v.ItemPartner
-		for _, w := range itemPartner {
-			args = append(args, quotation, v.QuotationItem, w.PartnerFunction)
-		}
-		cnt++
-	}
-	repeat := strings.Repeat("(?,?,?),", cnt-1) + "(?,?,?)"
-
-	rows, err := c.db.Query(
-		`SELECT *
-		FROM DataPlatformMastersAndTransactionsMysqlKube.data_platform_quotations_item_partner_data
-		WHERE (Quotation, QuotationItem, PartnerFunction)  IN ( `+repeat+` );`, args...,
-	)
-	if err != nil {
-		*errs = append(*errs, err)
-		return nil
-	}
-	defer rows.Close()
-
-	data, err := dpfm_api_output_formatter.ConvertToItemPartner(input, rows)
-	if err != nil {
-		*errs = append(*errs, err)
-		return nil
-	}
-
-	return data
-}
-
 func (c *DPFMAPICaller) ItemPricingElement(
 	mtx *sync.Mutex,
 	input *dpfm_api_input_reader.SDC,
@@ -380,6 +265,83 @@ func (c *DPFMAPICaller) ItemPricingElement(
 	defer rows.Close()
 
 	data, err := dpfm_api_output_formatter.ConvertToItemPricingElement(input, rows)
+	if err != nil {
+		*errs = append(*errs, err)
+		return nil
+	}
+
+	return data
+}
+
+func (c *DPFMAPICaller) Partner(
+	mtx *sync.Mutex,
+	input *dpfm_api_input_reader.SDC,
+	output *dpfm_api_output_formatter.SDC,
+	errs *[]error,
+	log *logger.Logger,
+) *[]dpfm_api_output_formatter.Partner {
+	var args []interface{}
+	quotation := input.Header.Quotation
+	partner := input.Header.Partner
+
+	cnt := 0
+	for _, v := range partner {
+		args = append(args, quotation, v.PartnerFunction)
+		cnt++
+	}
+
+	repeat := strings.Repeat("(?,?),", cnt-1) + "(?,?)"
+	rows, err := c.db.Query(
+		`SELECT *
+		FROM DataPlatformMastersAndTransactionsMysqlKube.data_platform_quotations_header_partner_data
+		WHERE (Quotation, PartnerFunction) IN ( `+repeat+` );`, args...,
+	)
+	if err != nil {
+		*errs = append(*errs, err)
+		return nil
+	}
+	defer rows.Close()
+
+	data, err := dpfm_api_output_formatter.ConvertToPartner(input, rows)
+	if err != nil {
+		*errs = append(*errs, err)
+		return nil
+	}
+
+	return data
+}
+
+func (c *DPFMAPICaller) Address(
+	mtx *sync.Mutex,
+	input *dpfm_api_input_reader.SDC,
+	output *dpfm_api_output_formatter.SDC,
+	errs *[]error,
+	log *logger.Logger,
+) *[]dpfm_api_output_formatter.Address {
+	var args []interface{}
+	quotation := input.Header.Quotation
+	address := input.Header.Address
+
+	cnt := 0
+	for _, v := range address {
+		args = append(args, quotation, v.AddressID)
+		cnt++
+	}
+
+	repeat := strings.Repeat("(?,?),", cnt-1) + "(?,?)"
+
+	rows, err := c.db.Query(
+		`SELECT *
+		FROM DataPlatformMastersAndTransactionsMysqlKube.data_platform_quotations_address_data
+		WHERE (Quotation, AddressID) IN ( `+repeat+` );`, args...,
+	)
+	if err != nil {
+		*errs = append(*errs, err)
+		return nil
+	}
+	defer rows.Close()
+
+	data, err := dpfm_api_output_formatter.ConvertToAddress(input, rows)
 	if err != nil {
 		*errs = append(*errs, err)
 		return nil

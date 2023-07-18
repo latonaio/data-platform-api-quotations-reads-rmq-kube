@@ -19,29 +19,51 @@ func ConvertToHeader(sdc *api_input_reader.SDC, rows *sql.Rows) (*[]Header, erro
 		err := rows.Scan(
 			&pm.Quotation,
 			&pm.QuotationDate,
-			&pm.DistributionChannel,
-			&pm.BusinessArea,
-			&pm.District,
-			&pm.CreationDate,
-			&pm.LastChangeDate,
+			&pm.QuotationType,
+			&pm.QuotationStatus,
+			&pm.SupplyChainRelationshipID,
+			&pm.SupplyChainRelationshipBillingID,
+			&pm.SupplyChainRelationshipPaymentID,
+			&pm.Buyer,
+			&pm.Seller,
+			&pm.BillToParty,
+			&pm.BillFromParty,
+			&pm.BillToCountry,
+			&pm.BillFromCountry,
+			&pm.Payer,
+			&pm.Payee,
 			&pm.ContractType,
-			&pm.VaridityStartDate,
-			&pm.ValidityEndDate,
-			&pm.InvoiceScheduleStartDate,
-			&pm.InvoiceScheduleEndDate,
-			&pm.TotalNetAmount,
-			&pm.TransactionCurrency,
-			&pm.PricingDate,
-			&pm.RequestedDeliveryDate,
 			&pm.BindingPeriodValidityStartDate,
 			&pm.BindingPeriodValidityEndDate,
+			&pm.OrderValidityStartDate,
+			&pm.OrderValidityEndDate,
+			&pm.InvoicePeriodStartDate,
+			&pm.InvoicePeriodEndDate,
+			&pm.TotalNetAmount,
+			&pm.TotalTaxAmount,
+			&pm.TotalGrossAmount,
+			&pm.HeaderOrderIsDefined,
+			&pm.TransactionCurrency,
+			&pm.PricingDate,
+			&pm.PriceDetnExchangeRate,
+			&pm.RequestedDeliveryDate,
 			&pm.OrderProbabilityInPercent,
 			&pm.ExpectedOrderNetAmount,
 			&pm.Incoterms,
 			&pm.PaymentTerms,
 			&pm.PaymentMethod,
-			&pm.TaxClassification,
-			&pm.ReferenceInquiry,
+			&pm.ReferenceDocument,
+			&pm.AccountAssignmentGroup,
+			&pm.AccountingExchangeRate,
+			&pm.InvoiceDocumentDate,
+			&pm.IsExportImport,
+			&pm.HeaderText,
+			&pm.HeaderIsClosed,
+			&pm.HeaderBlockStatus,
+			&pm.CreationDate,
+			&pm.LastChangeDate,
+			&pm.IsCancelled,
+			&pm.IsMarkedForDeletion,
 		)
 		if err != nil {
 			fmt.Printf("err = %+v \n", err)
@@ -50,31 +72,53 @@ func ConvertToHeader(sdc *api_input_reader.SDC, rows *sql.Rows) (*[]Header, erro
 
 		data := pm
 		header = append(header, Header{
-			Quotation:                      data.Quotation,
-			QuotationDate:                  data.QuotationDate,
-			DistributionChannel:            data.DistributionChannel,
-			BusinessArea:                   data.BusinessArea,
-			District:                       data.District,
-			CreationDate:                   data.CreationDate,
-			LastChangeDate:                 data.LastChangeDate,
-			ContractType:                   data.ContractType,
-			VaridityStartDate:              data.VaridityStartDate,
-			ValidityEndDate:                data.ValidityEndDate,
-			InvoiceScheduleStartDate:       data.InvoiceScheduleStartDate,
-			InvoiceScheduleEndDate:         data.InvoiceScheduleEndDate,
-			TotalNetAmount:                 data.TotalNetAmount,
-			TransactionCurrency:            data.TransactionCurrency,
-			PricingDate:                    data.PricingDate,
-			RequestedDeliveryDate:          data.RequestedDeliveryDate,
-			BindingPeriodValidityStartDate: data.BindingPeriodValidityStartDate,
-			BindingPeriodValidityEndDate:   data.BindingPeriodValidityEndDate,
-			OrderProbabilityInPercent:      data.OrderProbabilityInPercent,
-			ExpectedOrderNetAmount:         data.ExpectedOrderNetAmount,
-			Incoterms:                      data.Incoterms,
-			PaymentTerms:                   data.PaymentTerms,
-			PaymentMethod:                  data.PaymentMethod,
-			TaxClassification:              data.TaxClassification,
-			ReferenceInquiry:               data.ReferenceInquiry,
+			Quotation:							data.Quotation,
+			QuotationDate:						data.QuotationDate,
+			QuotationType:						data.QuotationType,
+			QuotationStatus:					data.QuotationStatus,
+			SupplyChainRelationshipID:			data.SupplyChainRelationshipID,
+			SupplyChainRelationshipBillingID:	data.SupplyChainRelationshipBillingID,
+			SupplyChainRelationshipPaymentID:	data.SupplyChainRelationshipPaymentID,
+			Buyer:								data.Buyer,
+			Seller:								data.Seller,
+			BillToParty:						data.BillToParty,
+			BillFromParty:						data.BillFromParty,
+			BillToCountry:						data.BillToCountry,
+			BillFromCountry:					data.BillFromCountry,
+			Payer:								data.Payer,
+			Payee:								data.Payee,
+			ContractType:						data.ContractType,
+			BindingPeriodValidityStartDate:		data.BindingPeriodValidityStartDate,
+			BindingPeriodValidityEndDate:		data.BindingPeriodValidityEndDate,
+			OrderValidityStartDate:				data.OrderValidityStartDate,
+			OrderValidityEndDate:				data.OrderValidityEndDate,
+			InvoicePeriodStartDate:				data.InvoicePeriodStartDate,
+			InvoicePeriodEndDate:				data.InvoicePeriodEndDate,
+			TotalNetAmount:						data.TotalNetAmount,
+			TotalTaxAmount:						data.TotalTaxAmount,
+			TotalGrossAmount:					data.TotalGrossAmount,
+			HeaderOrderIsDefined:				data.HeaderOrderIsDefined,
+			TransactionCurrency:				data.TransactionCurrency,
+			PricingDate:						data.PricingDate,
+			PriceDetnExchangeRate:				data.PriceDetnExchangeRate,
+			RequestedDeliveryDate:				data.RequestedDeliveryDate,
+			OrderProbabilityInPercent:			data.OrderProbabilityInPercent,
+			ExpectedOrderNetAmount:				data.ExpectedOrderNetAmount,
+			Incoterms:							data.Incoterms,
+			PaymentTerms:						data.PaymentTerms,
+			PaymentMethod:						data.PaymentMethod,
+			ReferenceDocument:					data.ReferenceDocument,
+			AccountAssignmentGroup:				data.AccountAssignmentGroup,
+			AccountingExchangeRate:				data.AccountingExchangeRate,
+			InvoiceDocumentDate:				data.InvoiceDocumentDate,
+			IsExportImport:						data.IsExportImport,
+			HeaderText:							data.HeaderText,
+			HeaderIsClosed:						data.HeaderIsClosed,
+			HeaderBlockStatus:					data.HeaderBlockStatus,
+			CreationDate:						data.CreationDate,
+			LastChangeDate:						data.LastChangeDate,
+			IsCancelled:						data.IsCancelled,
+			IsMarkedForDeletion:				data.IsMarkedForDeletion,
 		})
 	}
 	if i == 0 {
@@ -84,196 +128,6 @@ func ConvertToHeader(sdc *api_input_reader.SDC, rows *sql.Rows) (*[]Header, erro
 
 	return &header, nil
 
-}
-
-func ConvertToHeaderPartner(sdc *api_input_reader.SDC, rows *sql.Rows) (*[]HeaderPartner, error) {
-	defer rows.Close()
-	headerPartner := make([]HeaderPartner, 0)
-
-	i := 0
-	for rows.Next() {
-		i++
-		pm := &requests.HeaderPartner{}
-
-		err := rows.Scan(
-			&pm.Quotation,
-			&pm.PartnerFunction,
-			&pm.BusinessPartner,
-			&pm.BusinessPartnerFullName,
-			&pm.BusinessPartnerName,
-			&pm.QuotationType,
-			&pm.Organization,
-			&pm.Language,
-			&pm.Currency,
-			&pm.ExternalDocumentID,
-			&pm.AddressID,
-		)
-		if err != nil {
-			fmt.Printf("err = %+v \n", err)
-			return nil, err
-		}
-
-		data := pm
-		headerPartner = append(headerPartner, HeaderPartner{
-			Quotation:               data.Quotation,
-			PartnerFunction:         data.PartnerFunction,
-			BusinessPartner:         data.BusinessPartner,
-			BusinessPartnerFullName: data.BusinessPartnerFullName,
-			BusinessPartnerName:     data.BusinessPartnerName,
-			QuotationType:           data.QuotationType,
-			Organization:            data.Organization,
-			Language:                data.Language,
-			Currency:                data.Currency,
-			ExternalDocumentID:      data.ExternalDocumentID,
-			AddressID:               data.AddressID,
-		})
-	}
-	if i == 0 {
-		fmt.Printf("DBに対象のレコードが存在しません。")
-		return nil, nil
-	}
-
-	return &headerPartner, nil
-
-}
-
-func ConvertToHeaderPartnerContact(sdc *api_input_reader.SDC, rows *sql.Rows) (*[]HeaderPartnerContact, error) {
-	defer rows.Close()
-	headerPartnerContact := make([]HeaderPartnerContact, 0)
-
-	i := 0
-	for rows.Next() {
-		i++
-		pm := &requests.HeaderPartnerContact{}
-
-		err := rows.Scan(
-			&pm.Quotation,
-			&pm.PartnerFunction,
-			&pm.ContactID,
-			&pm.BusinessPartner,
-			&pm.ContactPersonName,
-			&pm.EmailAddress,
-			&pm.PhoneNumber,
-			&pm.MobilePhoneNumber,
-			&pm.FaxNumber,
-			&pm.ContactTag1,
-			&pm.ContactTag2,
-			&pm.ContactTag3,
-			&pm.ContactTag4,
-		)
-		if err != nil {
-			fmt.Printf("err = %+v \n", err)
-			return nil, err
-		}
-
-		data := pm
-		headerPartnerContact = append(headerPartnerContact, HeaderPartnerContact{
-			Quotation:         data.Quotation,
-			PartnerFunction:   data.PartnerFunction,
-			ContactID:         data.ContactID,
-			BusinessPartner:   data.BusinessPartner,
-			ContactPersonName: data.ContactPersonName,
-			EmailAddress:      data.EmailAddress,
-			PhoneNumber:       data.PhoneNumber,
-			MobilePhoneNumber: data.MobilePhoneNumber,
-			FaxNumber:         data.FaxNumber,
-			ContactTag1:       data.ContactTag1,
-			ContactTag2:       data.ContactTag2,
-			ContactTag3:       data.ContactTag3,
-			ContactTag4:       data.ContactTag4,
-		})
-	}
-	if i == 0 {
-		fmt.Printf("DBに対象のレコードが存在しません。")
-		return nil, nil
-	}
-	return &headerPartnerContact, nil
-}
-
-func ConvertToHeaderPartnerPlant(sdc *api_input_reader.SDC, rows *sql.Rows) (*[]HeaderPartnerPlant, error) {
-	defer rows.Close()
-	headerPartnerPlant := make([]HeaderPartnerPlant, 0)
-
-	i := 0
-	for rows.Next() {
-		i++
-		pm := &requests.HeaderPartnerPlant{}
-
-		err := rows.Scan(
-			&pm.Quotation,
-			&pm.PartnerFunction,
-			&pm.BusinessPartner,
-			&pm.Plant,
-		)
-		if err != nil {
-			fmt.Printf("err = %+v \n", err)
-			return nil, err
-		}
-
-		data := pm
-		headerPartnerPlant = append(headerPartnerPlant, HeaderPartnerPlant{
-			Quotation:       data.Quotation,
-			PartnerFunction: data.PartnerFunction,
-			BusinessPartner: data.BusinessPartner,
-			Plant:           data.Plant,
-		})
-	}
-	if i == 0 {
-		fmt.Printf("DBに対象のレコードが存在しません。")
-		return nil, nil
-	}
-
-	return &headerPartnerPlant, nil
-}
-
-func ConvertToAddress(sdc *api_input_reader.SDC, rows *sql.Rows) (*[]Address, error) {
-	defer rows.Close()
-	address := make([]Address, 0)
-
-	i := 0
-	for rows.Next() {
-		i++
-		pm := &requests.Address{}
-
-		err := rows.Scan(
-			&pm.Quotation,
-			&pm.AddressID,
-			&pm.PostalCode,
-			&pm.LocalRegion,
-			&pm.Country,
-			&pm.District,
-			&pm.StreetName,
-			&pm.CityName,
-			&pm.Building,
-			&pm.Floor,
-			&pm.Room,
-		)
-		if err != nil {
-			fmt.Printf("err = %+v \n", err)
-			return nil, err
-		}
-
-		data := pm
-		address = append(address, Address{
-			Quotation:   data.Quotation,
-			AddressID:   data.AddressID,
-			PostalCode:  data.PostalCode,
-			LocalRegion: data.LocalRegion,
-			Country:     data.Country,
-			District:    data.District,
-			StreetName:  data.StreetName,
-			CityName:    data.CityName,
-			Building:    data.Building,
-			Floor:       data.Floor,
-			Room:        data.Room,
-		})
-	}
-	if i == 0 {
-		fmt.Printf("DBに対象のレコードが存在しません。")
-		return nil, nil
-	}
-
-	return &address, nil
 }
 
 func ConvertToItem(sdc *api_input_reader.SDC, rows *sql.Rows) (*[]Item, error) {
@@ -359,49 +213,6 @@ func ConvertToItem(sdc *api_input_reader.SDC, rows *sql.Rows) (*[]Item, error) {
 	return &item, nil
 }
 
-func ConvertToItemPartner(sdc *api_input_reader.SDC, rows *sql.Rows) (*[]ItemPartner, error) {
-	defer rows.Close()
-	itemPartner := make([]ItemPartner, 0)
-
-	i := 0
-	for rows.Next() {
-		i++
-		pm := &requests.ItemPartner{}
-
-		err := rows.Scan(
-			&pm.BusinessPartner,
-			&pm.Quotation,
-			&pm.QuotationItem,
-			&pm.PartnerFunction,
-			&pm.PartnerFunctionBusinessPartner,
-			&pm.BusinessPartnerFullName,
-			&pm.BusinessPartnerName,
-			&pm.AddressID,
-		)
-		if err != nil {
-			fmt.Printf("err = %+v \n", err)
-			return nil, err
-		}
-
-		data := pm
-		itemPartner = append(itemPartner, ItemPartner{
-			BusinessPartner:                data.BusinessPartner,
-			Quotation:                      data.Quotation,
-			QuotationItem:                  data.QuotationItem,
-			PartnerFunction:                data.PartnerFunction,
-			PartnerFunctionBusinessPartner: data.PartnerFunctionBusinessPartner,
-			BusinessPartnerFullName:        data.BusinessPartnerFullName,
-			BusinessPartnerName:            data.BusinessPartnerName,
-			AddressID:                      data.AddressID,
-		})
-	}
-	if i == 0 {
-		fmt.Printf("DBに対象のレコードが存在しません。")
-		return nil, nil
-	}
-	return &itemPartner, nil
-}
-
 func ConvertToItemPricingElement(sdc *api_input_reader.SDC, rows *sql.Rows) (*[]ItemPricingElement, error) {
 	defer rows.Close()
 	itemPricingElement := make([]ItemPricingElement, 0)
@@ -455,4 +266,105 @@ func ConvertToItemPricingElement(sdc *api_input_reader.SDC, rows *sql.Rows) (*[]
 		return nil, nil
 	}
 	return &itemPricingElement, nil
+}
+
+func ConvertToPartner(sdc *api_input_reader.SDC, rows *sql.Rows) (*[]Partner, error) {
+	defer rows.Close()
+	partner := make([]Partner, 0)
+
+	i := 0
+	for rows.Next() {
+		i++
+		pm := &requests.Partner{}
+
+		err := rows.Scan(
+			&pm.Quotation,
+			&pm.PartnerFunction,
+			&pm.BusinessPartner,
+			&pm.BusinessPartnerFullName,
+			&pm.BusinessPartnerName,
+			&pm.QuotationType,
+			&pm.Organization,
+			&pm.Language,
+			&pm.Currency,
+			&pm.ExternalDocumentID,
+			&pm.AddressID,
+		)
+		if err != nil {
+			fmt.Printf("err = %+v \n", err)
+			return nil, err
+		}
+
+		data := pm
+		partner = append(partner, Partner{
+			Quotation:               data.Quotation,
+			PartnerFunction:         data.PartnerFunction,
+			BusinessPartner:         data.BusinessPartner,
+			BusinessPartnerFullName: data.BusinessPartnerFullName,
+			BusinessPartnerName:     data.BusinessPartnerName,
+			QuotationType:           data.QuotationType,
+			Organization:            data.Organization,
+			Language:                data.Language,
+			Currency:                data.Currency,
+			ExternalDocumentID:      data.ExternalDocumentID,
+			AddressID:               data.AddressID,
+		})
+	}
+	if i == 0 {
+		fmt.Printf("DBに対象のレコードが存在しません。")
+		return nil, nil
+	}
+
+	return &partner, nil
+
+}
+
+func ConvertToAddress(sdc *api_input_reader.SDC, rows *sql.Rows) (*[]Address, error) {
+	defer rows.Close()
+	address := make([]Address, 0)
+
+	i := 0
+	for rows.Next() {
+		i++
+		pm := &requests.Address{}
+
+		err := rows.Scan(
+			&pm.Quotation,
+			&pm.AddressID,
+			&pm.PostalCode,
+			&pm.LocalRegion,
+			&pm.Country,
+			&pm.District,
+			&pm.StreetName,
+			&pm.CityName,
+			&pm.Building,
+			&pm.Floor,
+			&pm.Room,
+		)
+		if err != nil {
+			fmt.Printf("err = %+v \n", err)
+			return nil, err
+		}
+
+		data := pm
+		address = append(address, Address{
+			Quotation:   data.Quotation,
+			AddressID:   data.AddressID,
+			PostalCode:  data.PostalCode,
+			LocalRegion: data.LocalRegion,
+			Country:     data.Country,
+			District:    data.District,
+			StreetName:  data.StreetName,
+			CityName:    data.CityName,
+			Building:    data.Building,
+			Floor:       data.Floor,
+			Room:        data.Room,
+		})
+	}
+	if i == 0 {
+		fmt.Printf("DBに対象のレコードが存在しません。")
+		return nil, nil
+	}
+
+	return &address, nil
 }
