@@ -71,7 +71,7 @@ type Header struct {
 	ReferenceDocument					*int		`json:"ReferenceDocument"`
 	AccountAssignmentGroup				string		`json:"AccountAssignmentGroup"`
 	AccountingExchangeRate				*float32	`json:"AccountingExchangeRate"`
-	InvoiceDocumentDate					string		`json:"InvoiceDocumentDate"`
+	InvoiceDocumentDate					*string		`json:"InvoiceDocumentDate"`
 	IsExportImport						*bool		`json:"IsExportImport"`
 	HeaderText							*bool		`json:"HeaderText"`
 	HeaderIsClosed						*bool		`json:"HeaderIsClosed"`
@@ -83,51 +83,85 @@ type Header struct {
 }
 
 type Item struct {
-	Quotation                     int      `json:"Quotation"`
-	QuotationItem                 int      `json:"QuotationItem"`
-	QuotationItemCategory         *string  `json:"QuotationItemCategory"`
-	QuotationItemText             *string  `json:"QuotationItemText"`
-	Product                       *string  `json:"Product"`
-	QuotationQuantity             *float32 `json:"QuotationQuantity"`
-	QuotationQuantityUnit         *string  `json:"QuotationQuantityUnit"`
-	ItemOrderProbabilityInPercent *float32 `json:"ItemOrderProbabilityInPercent"`
-	ItemGrossWeight               *float32 `json:"ItemGrossWeight"`
-	ItemNetWeight                 *float32 `json:"ItemNetWeight"`
-	ItemWeightUnit                *string  `json:"ItemWeightUnit"`
-	TransactionCurrency           *string  `json:"TransactionCurrency"`
-	BussinessParnterCurrency      *string  `json:"BussinessParnterCurrency"`
-	NetAmount                     *float32 `json:"NetAmount"`
-	ProductGroup                  *string  `json:"ProductGroup"`
-	ProductPricingGroup           *string  `json:"ProductPricingGroup"`
-	Batch                         *string  `json:"Batch"`
-	IssuingPlant                  *string  `json:"IssuingPlant"`
-	IssuingPlantStorageLocation   *string  `json:"IssuingPlantStorageLocation"`
-	ReceivingPlant                *string  `json:"ReceivingPlant"`
-	ReceivingPlantStorageLocation *string  `json:"ReceivingPlantStorageLocation"`
-	Incoterms                     *string  `json:"Incoterms"`
-	PaymentTerms                  *string  `json:"PaymentTerms"`
-	ProductTaxClassification1     *string  `json:"ProductTaxClassification1"`
-	Project                       *string  `json:"Project"`
-	ProfitCenter                  *string  `json:"ProfitCenter"`
-	ReferenceInquiry              *int     `json:"ReferenceInquiry"`
-	ReferenceInquiryItem          *int     `json:"ReferenceInquiryItem"`
+	Quotation								int		`json:"Quotation"`
+	QuotationItem							int		`json:"QuotationItem"`
+	QuotationItemCategory					string	`json:"QuotationItemCategory"`
+	SupplyChainRelationshipID				int		`json:"SupplyChainRelationshipID"`
+	Buyer									int		`json:"Buyer"`
+	Seller									int		`json:"Seller"`
+	QuotationItemText						string	`json:"QuotationItemText"`
+	QuotationItemTextByBuyer				string	`json:"QuotationItemTextByBuyer"`
+	QuotationItemTextBySeller				string	`json:"QuotationItemTextBySeller"`
+	Product									string	`json:"Product"`
+	ProductStandardID						*string	`json:"ProductStandardID"`
+	ProductGroup							*string	`json:"ProductGroup"`
+	BaseUnit								string	`json:"BaseUnit"`
+	PricingDate								string	`json:"PricingDate"`
+	PriceDetnExchangeRate					*float32 `json:"PriceDetnExchangeRate"`
+	RequestedDeliveryDate					string	`json:"RequestedDeliveryDate"`
+	DeliveryUnit							float32	`json:"DeliveryUnit"`
+	ServicesRenderingDate					*string	`json:"ServicesRenderingDate"`
+	QuotationQuantityInBaseUnit				string	`json:"QuotationQuantityInBaseUnit"`
+	QuotationQuantityInDeliveryUnit			string	`json:"QuotationQuantityInDeliveryUnit"`
+	ItemWeightUnit							*string	`json:"ItemWeightUnit"`
+	ProductGrossWeight						*float32 `json:"ProductGrossWeight"`
+	ItemGrossWeight							*float32 `json:"ItemGrossWeight"`
+	ProductNetWeight						*float32 `json:"ProductNetWeight"`
+	ItemNetWeight							*float32 `json:"ItemNetWeight"`
+	InternalCapacityQuantity				*float32 `json:"InternalCapacityQuantity"`
+	InternalCapacityQuantityUnit			*string	 `json:"InternalCapacityQuantityUnit"`
+	NetAmount								float32 `json:"NetAmount"`
+	TaxAmount								float32 `json:"TaxAmount"`
+	GrossAmount								float32 `json:"GrossAmount"`
+	Incoterms								*string	`json:"Incoterms"`
+	TransactionTaxClassification			string	`json:"TransactionTaxClassification"`
+	ProductTaxClassificationBillToCountry	*string	`json:"ProductTaxClassificationBillToCountry"`
+	ProductTaxClassificationBillFromCountry	*string	`json:"ProductTaxClassificationBillFromCountry"`
+	DefinedTaxClassification				*string	`json:"DefinedTaxClassification"`
+	AccountAssignmentGroup					string	`json:"AccountAssignmentGroup"`
+	ProductAccountAssignmentGroup			string	`json:"ProductAccountAssignmentGroup"`
+	PaymentTerms							string	`json:"PaymentTerms"`
+	PaymentMethod							string	`json:"PaymentMethod"`
+	Project									*int	`json:"Project"`
+	WBSElement								*int	`json:"WBSElement"`
+	AccountingExchangeRate					*float32 `json:"AccountingExchangeRate"`
+	ReferenceDocument						*int	`json:"ReferenceDocument"`
+	ReferenceDocumentItem					*int	`json:"ReferenceDocumentItem"`
+	TaxCode									*string	`json:"TaxCode"`
+	TaxRate									*float32 `json:"TaxRate"`
+	CountryOfOrigin							*string	`json:"CountryOfOrigin"`
+	CountryOfOriginLanguage					*string	`json:"CountryOfOriginLanguage"`
+	ItemBlockStatus							*bool	`json:"ItemBlockStatus"`
+	CreationDate							string	`json:"CreationDate"`
+	LastChangeDate							string	`json:"LastChangeDate"`
+	IsCancelled								*bool	`json:"IsCancelled"`
+	IsMarkedForDeletion						*bool	`json:"IsMarkedForDeletion"`
 }
 
 type ItemPricingElement struct {
-	BusinessPartner                int      `json:"BusinessPartner"`
-	Quotation                      int      `json:"Quotation"`
-	QuotationItem                  int      `json:"QuotationItem"`
-	PricingProcedureStep           int      `json:"PricingProcedureStep"`
-	PricingProcedureCounter        int      `json:"PricingProcedureCounter"`
-	ConditionType                  *string  `json:"ConditionType"`
-	PriceConditionDeterminationDte *string  `json:"PriceConditionDeterminationDte"`
-	ConditionRateValue             *float32 `json:"ConditionRateValue"`
-	ConditionCurrency              *string  `json:"ConditionCurrency"`
-	ConditionRecord                *int     `json:"ConditionRecord"`
-	ConditionSequentialNumber      *int     `json:"ConditionSequentialNumber"`
-	TaxCode                        *string  `json:"TaxCode"`
-	TransactionCurrency            *string  `json:"TransactionCurrency"`
-	ConditionIsManuallyChanged     *bool    `json:"ConditionIsManuallyChanged"`
+	Quotation					int		`json:"Quotation"`
+	QuotationItem				int		`json:"QuotationItem"`
+	PricingProcedureCounter		int		`json:"PricingProcedureCounter"`
+	SupplyChainRelationshipID	int		`json:"SupplyChainRelationshipID"`
+	Buyer						int		`json:"Buyer"`
+	Seller						int		`json:"Seller"`
+	ConditionRecord				int		`json:"ConditionRecord"`
+	ConditionSequentialNumber	int		`json:"ConditionSequentialNumber"`
+	ConditionType				string	`json:"ConditionType"`
+	PricingDate					string	`json:"PricingDate"`
+	ConditionRateValue			float32	`json:"ConditionRateValue"`
+	ConditionRateValueUnit		string	`json:"ConditionRateValueUnit"`
+	ConditionScaleQuantity		int		`json:"ConditionScaleQuantity"`
+	ConditionCurrency			string	`json:"ConditionCurrency"`
+	ConditionQuantity			float32	`json:"ConditionQuantity"`
+	TaxCode						*string	`json:"TaxCode"`
+	ConditionAmount				float32	`json:"ConditionAmount"`
+	TransactionCurrency			string	`json:"TransactionCurrency"`
+	ConditionIsManuallyChanged	*bool	`json:"ConditionIsManuallyChanged"`
+	CreationDate				string	`json:"CreationDate"`
+	LastChangeDate				string	`json:"LastChangeDate"`
+	IsCancelled					*bool	`json:"IsCancelled"`
+	IsMarkedForDeletion			*bool	`json:"IsMarkedForDeletion"`
 }
 
 type Partner struct {

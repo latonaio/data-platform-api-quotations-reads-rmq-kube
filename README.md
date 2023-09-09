@@ -1,7 +1,7 @@
 # data-platform-api-quotations-reads-rmq-kube
 
 data-platform-api-quotations-reads-rmq-kube は、周辺業務システム　を データ連携基盤 と統合することを目的に、API で見積データを取得するマイクロサービスです。  
-https://xxx.xxx.io/api/API_QUOTATIONS_SRV/creates/
+https://xxx.xxx.io/api/API_QUOTATIONS_SRV/reads/
 
 ## 動作環境
 
@@ -78,7 +78,7 @@ func (c *DPFMAPICaller) AsyncReads(
 ## Output  
 本マイクロサービスでは、[golang-logging-library-for-data-platform](https://github.com/latonaio/golang-logging-library-for-data-platform) により、以下のようなデータがJSON形式で出力されます。  
 以下の sample.json の例は 見積 の ヘッダデータ が取得された結果の JSON の例です。  
-以下の項目のうち、"OrderID" ～ "PlusMinusFlag" は、/DPFM_API_Output_Formatter/type.go 内 の Type Header {} による出力結果です。"cursor" ～ "time"は、golang-logging-library による 定型フォーマットの出力結果です。  
+以下の項目のうち、"Quotation" ～ "IsMarkedForDeletion" は、/DPFM_API_Output_Formatter/type.go 内 の Type Header {} による出力結果です。"cursor" ～ "time"は、golang-logging-library による 定型フォーマットの出力結果です。  
 
 ```
 XXX

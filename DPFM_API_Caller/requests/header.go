@@ -39,7 +39,7 @@ type Header struct {
 	ReferenceDocument					*int		`json:"ReferenceDocument"`
 	AccountAssignmentGroup				string		`json:"AccountAssignmentGroup"`
 	AccountingExchangeRate				*float32	`json:"AccountingExchangeRate"`
-	InvoiceDocumentDate					string		`json:"InvoiceDocumentDate"`
+	InvoiceDocumentDate					*string		`json:"InvoiceDocumentDate"`
 	IsExportImport						*bool		`json:"IsExportImport"`
 	HeaderText							*bool		`json:"HeaderText"`
 	HeaderIsClosed						*bool		`json:"HeaderIsClosed"`
