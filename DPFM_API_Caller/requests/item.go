@@ -50,6 +50,8 @@ type Item struct {
 	CountryOfOrigin							*string	`json:"CountryOfOrigin"`
 	CountryOfOriginLanguage					*string	`json:"CountryOfOriginLanguage"`
 	ItemBlockStatus							*bool	`json:"ItemBlockStatus"`
+	ExternalReferenceDocument               *string `json:"ExternalReferenceDocument"`
+	ExternalReferenceDocumentItem           *string `json:"ExternalReferenceDocumentItem"`
 	CreationDate							string	`json:"CreationDate"`
 	LastChangeDate							string	`json:"LastChangeDate"`
 	IsCancelled								*bool	`json:"IsCancelled"`

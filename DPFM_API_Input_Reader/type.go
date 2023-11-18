@@ -113,6 +113,7 @@ type Header struct {
 	HeaderText							*bool		`json:"HeaderText"`
 	HeaderIsClosed						*bool		`json:"HeaderIsClosed"`
 	HeaderBlockStatus					*bool		`json:"HeaderBlockStatus"`
+	ExternalReferenceDocument         	*string		`json:"ExternalReferenceDocument"`
 	CreationDate						*string		`json:"CreationDate"`
 	LastChangeDate						*string		`json:"LastChangeDate"`
 	IsCancelled							*bool		`json:"IsCancelled"`
@@ -172,6 +173,8 @@ type Item struct {
 	CountryOfOrigin							*string	`json:"CountryOfOrigin"`
 	CountryOfOriginLanguage					*string	`json:"CountryOfOriginLanguage"`
 	ItemBlockStatus							*bool	`json:"ItemBlockStatus"`
+	ExternalReferenceDocument               *string  `json:"ExternalReferenceDocument"`
+	ExternalReferenceDocumentItem           *string  `json:"ExternalReferenceDocumentItem"`
 	CreationDate							*string	`json:"CreationDate"`
 	LastChangeDate							*string	`json:"LastChangeDate"`
 	IsCancelled								*bool	`json:"IsCancelled"`
@@ -206,17 +209,17 @@ type ItemPricingElement struct {
 }
 
 type Partner struct {
-	Quotation               int			`json:"Quotation"`
-	PartnerFunction         string		`json:"PartnerFunction"`
-	BusinessPartner         *int		`json:"BusinessPartner"`
-	BusinessPartnerFullName *string		`json:"BusinessPartnerFullName"`
-	BusinessPartnerName     *string		`json:"BusinessPartnerName"`
-	QuotationType           *string		`json:"QuotationType"`
-	Organization            *string		`json:"Organization"`
-	Language                *string		`json:"Language"`
-	Currency                *string		`json:"Currency"`
-	ExternalDocumentID      *string		`json:"ExternalDocumentID"`
-	AddressID               *int		`json:"AddressID"`
+	Quotation               int		`json:"Quotation"`
+	PartnerFunction         string  `json:"PartnerFunction"`
+	BusinessPartner         int     `json:"BusinessPartner"`
+	BusinessPartnerFullName *string `json:"BusinessPartnerFullName"`
+	BusinessPartnerName     *string `json:"BusinessPartnerName"`
+	Organization            *string `json:"Organization"`
+	Country                 *string `json:"Country"`
+	Language                *string `json:"Language"`
+	Currency                *string `json:"Currency"`
+	ExternalDocumentID      *string `json:"ExternalDocumentID"`
+	AddressID               *int    `json:"AddressID"`
 }
 
 type Address struct {
